@@ -22,4 +22,12 @@
             {% endfor %}
         </ul>
     </body>
+    <body>
+        <h1>微博热榜（Top10）</h1>
+        <ul>
+            {% for item in weibo %}
+                <li>{{ item.title }}</li>
+            {% endfor %}
+        </ul>
+    </body>
 </html>

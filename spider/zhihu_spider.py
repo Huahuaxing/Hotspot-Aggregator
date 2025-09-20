@@ -1,4 +1,6 @@
 import requests
+from models import db, Zhihu_hot
+from datetime import datetime
 
 def fetch_zhihu_hot():
     url = "https://www.zhihu.com/api/v3/feed/topstory/hot-lists/total"
@@ -9,18 +11,36 @@ def fetch_zhihu_hot():
 
     try:
         r = requests.get(url, headers=headers)
-        r.raise_for_status()
         data = r.json()
 
-        hot_list = []
-        for item in data["data"][:10]:
-            hot_list.append({
-                "title": item["target"]["title"],
-                "url": item["target"]["url"]
+        zhihu_hot_list = []
+        
+        # 清空之前的知乎数据（可选，根据需要决定是否保留历史数据）
+        Zhihu_hot.query.delete()
+        
+        for item in data["data"]:
+            title = item["target"]["title"]
+            hotValue = str(item.get("detail_text", ""))  # 热度值
+            
+            # 保存到数据库
+            topic = Zhihu_hot(
+                title=title,
+                hotValue=hotValue,
+            )
+            db.session.add(topic)
+            
+            # 同时添加到返回列表
+            zhihu_hot_list.append({
+                "title": title,
+                "hotValue": hotValue
             })
-        return hot_list
+        
+        # 提交数据库事务
+        db.session.commit()
+        return zhihu_hot_list
     except Exception as e:
         print("知乎爬虫出错：", e)
+        db.session.rollback()  # 出错时回滚事务
         return []
 
 if __name__ == "__main__":

@@ -1,9 +1,10 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_user, login_required, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
-from models import db, User, Topic
+from models import db, User, Zhihu_hot, Weibo_hot
 
 from spider.zhihu_spider import fetch_zhihu_hot
+from spider.weibo_spider import fetch_weibo_hot
 
 
 # 定义蓝图
@@ -13,9 +14,19 @@ main_bp = Blueprint("main", __name__)
 @main_bp.route("/")
 @login_required
 def index():
-    # topics = Topic.query.order_by(Topic.fetched_at.desc()).all()
-    zhihu_data = fetch_zhihu_hot()
-    return render_template("index.html", zhihu = zhihu_data)
+    # 检查并获取知乎数据
+    zhihu_data = Zhihu_hot.query.all()
+    if not zhihu_data:
+        fetch_zhihu_hot()
+        zhihu_data = Zhihu_hot.query.all()
+
+    # 微博
+    weibo_data = Weibo_hot.query.all()
+    if not weibo_data:
+        fetch_weibo_hot()
+        weibo_data = Weibo_hot.query.all()
+    
+    return render_template("index.html", zhihu=zhihu_data[:10], weibo=weibo_data[:10])
 
 
 @main_bp.route("/login", methods=["GET", "POST"])
@@ -65,5 +76,17 @@ def register():
 def logout():
     logout_user()
     return redirect(url_for("main.login"))
+
+
+@main_bp.route("/refresh_zhihu")
+@login_required
+def refresh_zhihu():
+    """手动刷新知乎热点数据"""
+    try:
+        fetch_zhihu_hot()
+        flash("知乎热点数据已更新")
+    except Exception as e:
+        flash(f"更新失败: {str(e)}")
+    return redirect(url_for("main.index"))
 
 
