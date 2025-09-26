@@ -1,21 +1,95 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>登录</title>
-</head>
-<body>
-    <h2>登录</h2>
-    <form method="post" action="{{ url_for('main.login') }}">
-        <label>用户名：</label>
-        <input type="text" name="username" placeholder="用户名" required>
+<html lang="zh-CN">
+    <head>
+        <meta charset="UTF-8">
+        <title>登录</title>
+        <style>
+            body {
+                font-family: "Microsoft Yahei", Arial, sans-serif;
+                background: linear-gradient(135deg, #74ABE2, #5563DE);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                margin: 20px;
+            }
+            .login-container {
+                background: #fff;
+                padding: 40px 35px;
+                border-radius: 12px;
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+                width: 350px;
+                text-align: center;
+            }
+            .login-container h2 {
+                margin-bottom: 25px;
+                color: #333;
+            }
+            .login-container label {
+                display: block;
+                text-align: left;
+                margin: 10px 0 5px;
+                font-size: 14px;
+                color: #444;
+            }
+            .login-container input[type="text"]
+            .login-container input[type="password"] {
+                width: 100%;
+                padding: 12px 15px;
+                border-radius: 8px;
+                border: 1px solid #ccc;
+                margin-bottom: 15px;
+                font-size: 14px;
+                transition: border 0.3s;
+            }
+            .login-container input[type="text"]:focus,
+            .login-container input[type="password"]:focus {
+                border-color: #5563DE;
+                outline: none;
+            }
+            .login-container input[type="submit"] {
+                width: 100%;
+                padding: 12px;
+                border: none;
+                border-radius: 8px;
+                background: #5563DE;
+                color: white;
+                font-size: 16px;
+                cursor: pointer;
+                transition: background 0.3s, transform 0.1s;
+            }
+            .login-container input[type="submit"]:hover {
+                background: #4450c4;
+            }
+            .login-container input[type="submit"]:active {
+                transform: scale(0.98);
+            }
+            .login-container p {
+                margin-top: 15px;
+                font-size: 14px;
+            }
+            .login-container a {
+                color: #5563DE;
+                text-decoration: none;
+            }
+            .login-container a:hover {
+                text-decoration: underline;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="login-container">
+            <h2>登录</h2>
+            <form method="post" action="{{ url_for('main.login') }}">
+                <label>用户名</label>
+                <input type="text" name="username" placeholder="请输入用户名" required>
 
-        <label>密码：</label>
-        <input type="password" name="password" placeholder="密码" required>
-        
-        <!-- <button type="submit">登录</button> -->
-        <input type="submit" value="登录">
-    </form>
-    <p>没有账号？ <a href="{{ url_for('main.register') }}">去注册</a></p>
-</body>
+                <label">密码</label>
+                <input type="password" name="password" placeholder="请输入密码" required>
+
+                <input type="submit" value="登录">
+            </form>
+            <p>没有账号？<a href="{{ url_for('main.register') }}">去注册</a></p>
+        </div>
+    </body>
 </html>
