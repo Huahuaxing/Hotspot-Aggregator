@@ -1,30 +1,17 @@
 from pydantic import BaseModel
 from datetime import datetime
-from typing import Optional, Dict, Any
 
-class HotspotBase(BaseModel):
+class NewsBase(BaseModel):
     title: str
     url: str
-    source: Optional[str] = "zhihu"
-    summary: Optional[str] = None
-    content: Optional[str] = None
-    tags: Optional[Dict[str, Any]] = None
-    published_at: Optional[datetime] = None
+    source: str | None = None
 
-class HotspotCreate(HotspotBase):
+class NewsCreate(NewsBase):
     pass
 
-class HotspotUpdate(BaseModel):
-    title: Optional[str] = None
-    summary: Optional[str] = None
-    content: Optional[str] = None
-    tags: Optional[Dict[str, Any]] = None
-    published_at: Optional[datetime] = None
-
-class HotspotRead(HotspotBase):
+class NewsOut(NewsBase):
     id: int
-    fetched_at: datetime
-    is_processed: bool
+    created_at: datetime
 
     class Config:
-        from_attributes = True
+        orm_mode = True
