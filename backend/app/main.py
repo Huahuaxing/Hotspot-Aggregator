@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.routes import news
+from app.routes import user, news
 from app.db import engine, Base
 from contextlib import asynccontextmanager
 
@@ -19,7 +19,7 @@ app = FastAPI(
 )
 
 # 注册路由
-app.include_router(news.router)
+app.include_router(user.router, news.router)
 
 @app.get("/")
 async def root():
