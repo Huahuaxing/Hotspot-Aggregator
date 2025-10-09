@@ -1,16 +1,14 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from app.routes import user, news
 from app.db import engine, Base
 from contextlib import asynccontextmanager
 
-# 使用 lifespan 替代 on_event
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # 应用启动前执行（类似 startup）
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     yield
-    # 应用关闭时执行（类似 shutdown）
     await engine.dispose()
 
 app = FastAPI(
@@ -18,8 +16,18 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# 注册路由
-app.include_router(user.router, news.router)
+# 添加CORS中间件
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],  # Vite默认端口
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# 修复路由注册
+app.include_router(user.router, prefix="/api/users", tags=["users"])
+app.include_router(news.router, prefix="/api/news", tags=["news"])
 
 @app.get("/")
 async def root():

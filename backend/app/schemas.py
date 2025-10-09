@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from datetime import datetime
+from typing import Optional
 
 class UserCreate(BaseModel):
     username: str
@@ -10,12 +11,20 @@ class UserRead(BaseModel):
     username: str
     
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class UserLogin(BaseModel):
     username: str
     password: str
 
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+class TokenData(BaseModel):
+    username: Optional[str] = None
+
+# 现有的新闻相关模型...
 class NewsBase(BaseModel):
     title: str
     url: str
@@ -29,4 +38,4 @@ class NewsOut(NewsBase):
     created_at: datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True
